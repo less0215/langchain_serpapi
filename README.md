@@ -102,3 +102,74 @@ df['new_column'] = df['column'].apply(lambda x: function_name(x, extra_param=val
 # 또는
 df['new_column'] = df['column'].apply(function_name, args=(extra_param,))
 ```
+
+
+# 프롬프트 엔지니어링과 랭체인 Q&A
+
+## 프롬프트 엔지니어링
+
+**Q: 프롬프트 엔지니어링에서 말하는 퓨샷은 예시 문장을 넣는 걸 말하는 거야?**
+
+A: 네, 맞습니다. 퓨샷(Few-shot)은 AI에게 "몇 가지 예시"를 보여주는 방식입니다. 이는 마치 선생님이 학생에게 문제 풀이 방법을 가르칠 때 몇 가지 예제를 보여주는 것과 비슷합니다.
+
+예시:
+- AI에게 긍정적인 문장과 부정적인 문장을 구분하도록 가르치는 경우:
+  ```
+  긍정: 오늘 날씨가 정말 좋아요!
+  부정: 비가 와서 기분이 우울해요.
+  긍정: 새 친구를 사귀어서 기뻐요.
+  부정: 시험에 떨어져서 실망했어요.
+
+  다음 문장은 긍정인가요, 부정인가요?
+  문장: 맛있는 케이크를 먹었어요.
+  ```
+
+이렇게 몇 가지 예시를 보여준 후 새로운 문장을 분류하도록 요청하는 것이 퓨샷 방식입니다.
+
+## 랭체인 (LangChain)
+
+**Q: 랭체인에서 말하는 LCEL이 뭐야?**
+
+A: LCEL은 "LangChain Expression Language"의 약자로, 랭체인에서 사용하는 특별한 방식의 코드 작성법입니다. 이는 마치 레고 블록을 조립하는 것처럼 AI 관련 작업들을 쉽게 조합할 수 있게 해주는 도구입니다.
+
+주요 특징:
+1. 복잡한 AI 작업을 간단하고 읽기 쉬운 형태로 만들 수 있습니다.
+2. `|` (파이프) 기호를 사용하여 여러 작업을 연결합니다.
+
+예시 코드:
+```python
+from langchain.prompts import ChatPromptTemplate
+from langchain.chat_models import ChatOpenAI
+
+prompt = ChatPromptTemplate.from_template("Tell me a {adjective} joke about {topic}")
+model = ChatOpenAI()
+
+chain = prompt | model
+
+result = chain.invoke({"adjective": "funny", "topic": "chickens"})
+print(result.content)
+```
+
+**Q: LCEL은 쉽게 말해서 | 이걸로 코드를 연결하는걸 말하는거지?**
+
+A: 네, 정확합니다! LCEL의 핵심 아이디어를 잘 이해하셨습니다. `|` (파이프 기호)는 LCEL에서 중요한 역할을 합니다:
+
+1. `|`는 "이것을 가지고 다음 작업을 해"라는 의미입니다.
+2. 마치 공장의 조립 라인처럼, 한 단계의 결과물이 다음 단계의 입력으로 전달됩니다.
+
+간단한 예:
+```python
+prompt | model | output_parser
+```
+
+이 코드는 다음과 같이 해석됩니다:
+1. 먼저 `prompt`(질문이나 지시)를 만들고,
+2. 그 다음 `model`(AI 모델)에 전달해서 처리하고,
+3. 마지막으로 `output_parser`를 통해 결과를 정리합니다.
+
+LCEL의 장점:
+- 코드를 이해하기 쉽습니다.
+- 필요에 따라 단계를 쉽게 추가하거나 제거할 수 있습니다.
+- 각 단계를 재사용하기 쉽습니다.
+
+LCEL은 이런 식으로 AI 작업을 더 쉽고 효율적으로 만들어주는 도구입니다.
